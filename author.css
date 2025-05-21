@@ -28,6 +28,12 @@ h2 {
   font-weight: 700;
   margin-bottom: 0.7em;
 }
+h3 {
+  text-align: right;
+  font-size: 1.2em;
+  font-weight: 700;
+  margin-bottom: 0.7em;
+}
 .about, .preface {
   margin-bottom: 2.5em;
 }
