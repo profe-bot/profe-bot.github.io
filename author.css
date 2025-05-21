@@ -13,7 +13,7 @@ body {
   box-shadow: 0 4px 32px #bba7ea22;
   padding: 36px 32px 48px 32px;
 }
-h1, h2 {
+h1, h2, h3 {
   font-family: 'Quicksand', Arial, sans-serif;
   color: #2e613a;
   margin-top: 0;
