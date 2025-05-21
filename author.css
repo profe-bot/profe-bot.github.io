@@ -79,10 +79,9 @@ code {
   background: linear-gradient(90deg, #b26fdd, #7c3aed);
 }
 .cta-btn[disabled] {
-   background: #ccc;
+   background: linear-gradient(90deg, #ccc, #ced)
    color: #666;
    cursor: not-allowed;
-   #box-shadow: none;
 }
 @media (max-width: 600px) {
   body {
