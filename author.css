@@ -28,7 +28,10 @@ h2 {
   font-weight: 700;
   margin-bottom: 0.7em;
 }
-.about, .preface {
+.about {
+  margin-bottom: 0;
+}
+.preface {
   margin-bottom: 2.5em;
 }
 .about strong {
