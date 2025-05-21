@@ -82,7 +82,7 @@ code {
    background: #ccc;
    color: #666;
    cursor: not-allowed;
-   box-shadow: none;
+   #box-shadow: none;
 }
 @media (max-width: 600px) {
   body {
