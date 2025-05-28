@@ -34,7 +34,7 @@ h2 {
 .preface {
   margin-bottom: 2.5em;
 }
-.about, .preface strong {
+strong {
   color: #2e613a;
 }
 blockquote {
