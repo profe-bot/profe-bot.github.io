@@ -1,59 +1,34 @@
+// Esperar a que el DOM esté cargado
+window.addEventListener('DOMContentLoaded', () => {
+  // Obtener referencias a elementos
   const character = document.getElementById('character');
-  const text = document.getElementById('textToWalk');
-  const container = document.getElementById('containerToWalk');
+  const wstart = document.getElementById('wstart');
+  const wstop = document.getElementById('wstop');
 
+  // Verificar que los elementos existan
+  if (!character || !wstart || !wstop) {
+    console.error('No se encontraron los elementos necesarios');
+    return;
+  }
+
+  // Configuración
   const frameCount = 6;
   const frameWidth = 42;
+  const speed = 2;
   let currentFrame = 0;
   let frameTime = 0;
   const frameDuration = 100;
 
-  // Variables dinámicas
-  let lineYs = [];
-  let maxX;
-  let lineIndex = 0;
-  let x = 0;
-  let direction = 1;
-  const speed = 2;
+  let x = wstart.offsetLeft;
+  let direction = 1; // 1 para ir hacia wstop, -1 para volver a wstart
 
-  // Función para obtener posición Y de las líneas, centrado vertical del sprite
-  function getLinePositions(element) {
-    const textNode = element.firstChild;
-    const range = document.createRange();
-    const lines = [];
-
-    for(let i = 0; i < element.textContent.length; i++) {
-      range.setStart(textNode, i);
-      range.setEnd(textNode, i + 1);
-      const rects = range.getClientRects();
-
-      for (let rect of rects) {
-        const topRelative = rect.top - container.getBoundingClientRect().top;
-        // Evitar duplicados muy cercanos (misma línea)
-        if (lines.length === 0 || Math.abs(lines[lines.length - 1] - topRelative) > 2) {
-          // Centrar verticalmente el sprite respecto a la línea de texto
-          lines.push(topRelative + rect.height / 2 - frameWidth / 2);
-        }
-      }
-    }
-    return lines;
-  }
-
-  // Actualizar variables responsive
-  function updateLayout() {
-    lineYs = getLinePositions(text);
-    maxX = container.clientWidth - frameWidth;
-    // Si línea actual fuera inválida tras resize, ajustar
-    if (lineIndex >= lineYs.length) lineIndex = lineYs.length - 1;
-  }
-
-  window.addEventListener('resize', updateLayout);
-
+  // Función de animación
   function update(timestamp) {
     if (!update.lastTime) update.lastTime = timestamp;
     const delta = timestamp - update.lastTime;
     frameTime += delta;
 
+    // Actualizar frame de animación
     if (frameTime >= frameDuration) {
       frameTime = 0;
       currentFrame = (currentFrame + 1) % frameCount;
@@ -62,37 +37,58 @@
 
     update.lastTime = timestamp;
 
+    // Calcular posición objetivo
+    let targetX = wstop.offsetLeft - frameWidth/2;
+    
+    // Mover hacia el objetivo
     x += speed * direction;
 
-    if (direction === 1 && x >= maxX) {
-      x = maxX;
-      if (lineIndex < lineYs.length - 1) {
-        lineIndex++;
-      } else {
-        direction = -1;
-        character.style.transform = 'scaleX(-1)';
-      }
-    } else if (direction === -1 && x <= 0) {
-      x = 0;
-      if (lineIndex > 0) {
-        lineIndex--;
-      } else {
-        direction = 1;
-        character.style.transform = 'scaleX(1)';
-      }
+    // Cambiar dirección si llegamos a wstart o wstop
+    if (direction === 1 && x >= targetX) {
+        x = targetX;
+        setTimeout(() => {
+          direction = -1;
+          character.style.transform = 'scaleX(-1)';
+        }, 1000);
+    } else if (direction === -1 && x <= wstart.offsetLeft) {
+        x = wstart.offsetLeft;
+        setTimeout(() => {
+          direction = 1;
+          character.style.transform = 'scaleX(+1)';
+        }, 1000);
     }
 
+    // Establecer posición
     character.style.left = x + 'px';
-    character.style.top = lineYs[lineIndex] + 'px';
+    character.style.top = wstart.offsetTop - frameWidth/2 + 'px';
 
     requestAnimationFrame(update);
   }
 
-  // Inicializar
+  // Inicializar cuando la imagen esté cargada
   const img = new Image();
   img.src = 'walk.png';
-  img.onload = () => {
-    updateLayout();
+  img.onload = function() {
+    // Verificar que el elemento character existe antes de usarlo
+    if (!character) return;
+
+    // Inicializar posición
     character.style.backgroundPosition = '0 0';
-    requestAnimationFrame(update);
+    character.style.left = wstart.offsetLeft + 'px';
+    character.style.top = wstart.offsetTop - frameWidth/2 + 'px';
+    // Ocultar el personaje inicialmente
+    character.style.opacity = '0';
+    
+    // Generar un delay aleatorio entre 2 y 6 segundos
+    const minDelay = 500; //ms 
+    const maxDelay = 1500; 
+    const randomDelay = Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
+    
+    // Esperar el tiempo aleatorio antes de iniciar la animación
+    setTimeout(function() {
+      // Mostrar el personaje
+      character.style.opacity = '0.7';
+      requestAnimationFrame(update);
+    }, randomDelay);
   };
+});
