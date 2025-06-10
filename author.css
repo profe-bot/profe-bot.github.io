@@ -5,6 +5,18 @@ body {
   padding: 0;
   line-height: 1.7;
 }
+#character {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  background-image: url('walk.png');
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  top: 0;
+  left: 0;
+  transform-origin: center;
+  pointer-events: none;
+}  
 .container {
   max-width: 720px;
   margin: 48px auto 0 auto;
