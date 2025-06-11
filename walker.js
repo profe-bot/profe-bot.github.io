@@ -1,23 +1,22 @@
-// Esperar a que el DOM esté cargado
-window.addEventListener('DOMContentLoaded', () => {
+function waitUntilDomLoaded() {
   // Obtener referencias a elementos
   const character = document.getElementById('character');
   const wstart = document.getElementById('wstart');
   const wstop = document.getElementById('wstop');
+  var wa = document.getElementById("walkingArea");
 
   // Verificar que los elementos existan
   if (!character || !wstart || !wstop) {
-    console.error('No se encontraron los elementos necesarios');
     return;
   }
 
   // Configuración
   const frameCount = 6;
   const frameWidth = 42;
-  const speed = 2;
+  const speed = 0.5;
   let currentFrame = 0;
   let frameTime = 0;
-  const frameDuration = 100;
+  const frameDuration = 400;
 
   let x = wstart.offsetLeft;
   let direction = 1; // 1 para ir hacia wstop, -1 para volver a wstart
@@ -37,6 +36,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     update.lastTime = timestamp;
 
+    //console.log("walking Area width =", wa.offsetWidth);
     // Calcular posición objetivo
     let targetX = wstop.offsetLeft - frameWidth/2;
     
@@ -66,9 +66,6 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // Inicializar cuando la imagen esté cargada
-  const img = new Image();
-  img.src = 'walk.png';
-  img.onload = function() {
     // Verificar que el elemento character existe antes de usarlo
     if (!character) return;
 
@@ -76,19 +73,17 @@ window.addEventListener('DOMContentLoaded', () => {
     character.style.backgroundPosition = '0 0';
     character.style.left = wstart.offsetLeft + 'px';
     character.style.top = wstart.offsetTop - frameWidth/2 + 'px';
-    // Ocultar el personaje inicialmente
     character.style.opacity = '0';
     
-    // Generar un delay aleatorio entre 2 y 6 segundos
-    const minDelay = 500; //ms 
-    const maxDelay = 1500; 
-    const randomDelay = Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
-    
     // Esperar el tiempo aleatorio antes de iniciar la animación
-    setTimeout(function() {
+    function moreOpaque() {
       // Mostrar el personaje
       character.style.opacity = '0.7';
       requestAnimationFrame(update);
-    }, randomDelay);
-  };
-});
+    }
+
+    // Generar un delay aleatorio entre 2 y 6 segundos
+    const randomDelay = Math.floor(Math.random() * 2200) + 500; // between 2200 and 1499 ms
+    setTimeout(moreOpaque, randomDelay);
+};
+window.addEventListener('DOMContentLoaded', waitUntilDomLoaded);
