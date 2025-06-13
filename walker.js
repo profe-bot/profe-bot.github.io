@@ -1,16 +1,10 @@
-var wa; // walkingArea
+var character;
+var wa;
 
 function waitUntilDomLoaded() {
-  // Obtener referencias a elementos
-  const character = document.getElementById('character');
-  const wstart = document.getElementById('wstart');
-  const wstop = document.getElementById('wstop');
-  wa = document.getElementById("walkingArea");
-
-  // Verificar que los elementos existan
-  if (!character || !wstart || !wstop) {
-    return;
-  }
+  character = document.getElementById('character');
+  wa = document.getElementById('walkingArea');
+  if (!character || !wa) return;
 
   // Configuración
   const frameCount = 6;
@@ -20,8 +14,8 @@ function waitUntilDomLoaded() {
   let frameTime = 0;
   const frameDuration = 400;
 
-  let x = wstart.offsetLeft;
-  let direction = 1; // 1 para ir hacia wstop, -1 para volver a wstart
+  let x = wa.getBoundingClientRect().left;
+  let direction = 1; // 1 para ir hacia la derecha, -1 para volver a izquierda
 
   // Función de animación
   function update(timestamp) {
@@ -38,22 +32,21 @@ function waitUntilDomLoaded() {
 
     update.lastTime = timestamp;
 
-    //console.log("walking Area width =", wa.offsetWidth);
-    // Calcular posición objetivo
-    let targetX = wstop.offsetLeft - frameWidth/2;
+    // Calcular posición objetivo usando getBoundingClientRect
+    let targetX = wa.getBoundingClientRect().right - frameWidth;
     
     // Mover hacia el objetivo
     x += speed * direction;
 
-    // Cambiar dirección si llegamos a wstart o wstop
+    // Cambiar dirección si llegamos al final del rectángulo de contenido
     if (direction === 1 && x >= targetX) {
         x = targetX;
         setTimeout(() => {
           direction = -1;
           character.style.transform = 'scaleX(-1)';
         }, 1000);
-    } else if (direction === -1 && x <= wstart.offsetLeft) {
-        x = wstart.offsetLeft;
+    } else if (direction === -1 && x <= wa.getBoundingClientRect().left) {
+        x = wa.getBoundingClientRect().left;
         setTimeout(() => {
           direction = 1;
           character.style.transform = 'scaleX(+1)';
@@ -62,30 +55,25 @@ function waitUntilDomLoaded() {
 
     // Establecer posición
     character.style.left = x + 'px';
-    character.style.top = wstart.offsetTop - frameWidth/2 + 'px';
-
+    character.style.top = wa.getBoundingClientRect().top - frameWidth/2 + 'px';
     requestAnimationFrame(update);
   }
 
-  // Inicializar cuando la imagen esté cargada
-    // Verificar que el elemento character existe antes de usarlo
-    if (!character) return;
+  // Verificar que el elemento character existe antes de usarlo
+  if (!character) return;
 
-    // Inicializar posición
-    character.style.backgroundPosition = '0 0';
-    character.style.left = wstart.offsetLeft + 'px';
-    character.style.top = wstart.offsetTop - frameWidth/2 + 'px';
-    character.style.opacity = '0';
-    
-    // Esperar el tiempo aleatorio antes de iniciar la animación
-    function moreOpaque() {
-      // Mostrar el personaje
-      character.style.opacity = '0.7';
-      requestAnimationFrame(update);
-    }
-
-    // Generar un delay aleatorio entre 2 y 6 segundos
-    const randomDelay = Math.floor(Math.random() * 2200) + 500; // between 2200 and 1499 ms
-    setTimeout(moreOpaque, randomDelay);
-};
+  // Inicializar posición
+  character.style.backgroundPosition = '0 0';
+  character.style.left = wa.getBoundingClientRect().left + 'px';
+  character.style.top = wa.getBoundingClientRect().top - frameWidth/2 + 'px';
+  character.style.opacity = '0';
+  
+  // Esperar el tiempo aleatorio antes de iniciar la animación
+  function moreOpaque() {
+    character.style.opacity = '0.7';
+    requestAnimationFrame(update);
+  }
+  let randomDelay = Math.floor(Math.random() * 2200) + 500; // between 2200 and 1499 ms
+  setTimeout(moreOpaque, randomDelay);
+}
 window.addEventListener('DOMContentLoaded', waitUntilDomLoaded);
