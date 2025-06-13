@@ -1,49 +1,41 @@
+var character;
+var wstart;
+var wstop;
+var wa; // walking area
+
 function waitUntilDomLoaded() {
-  // Obtener referencias a elementos
-  const character = document.getElementById('character');
-  const wstart = document.getElementById('wstart');
-  const wstop = document.getElementById('wstop');
-  var wa = document.getElementById("walkingArea");
+  character = document.getElementById('character');
+  wstart = document.getElementById('wstart');
+  wstop = document.getElementById('wstop');
+  wa = document.getElementById("walkingArea");
+  if (!character || !wstart || !wstop || !wa) return; // no character, bad luck
 
-  // Verificar que los elementos existan
-  if (!character || !wstart || !wstop) {
-    return;
-  }
-
-  // Configuración
-  const frameCount = 6;
-  const frameWidth = 42;
-  const speed = 0.5;
-  let currentFrame = 0;
-  let frameTime = 0;
-  const frameDuration = 400;
+  const nFrames = 6; // number of frames in the animation
+  const wFrame = 42; // width of each frame
+  const speed = 0.5; // speed of the animation
+  const frameDuration = 400; // duration of each frame
 
   let x = wstart.offsetLeft;
-  let direction = 1; // 1 para ir hacia wstop, -1 para volver a wstart
+  let direction = 1; // 1 to go right, -1 to go left
 
-  // Función de animación
+  // Animation function
+  let timeSinceLastFrame = 0; // time since last frame
+  let currentFrame = 0; // current frame
+  let pxToFrameCenter = wFrame/2; // distance from the frame center to the edge
+  let targetX = wstop.offsetLeft - pxToFrameCenter;
   function update(timestamp) {
-    if (!update.lastTime) update.lastTime = timestamp;
-    const delta = timestamp - update.lastTime;
-    frameTime += delta;
-
-    // Actualizar frame de animación
-    if (frameTime >= frameDuration) {
-      frameTime = 0;
-      currentFrame = (currentFrame + 1) % frameCount;
-      character.style.backgroundPosition = `-${currentFrame * frameWidth}px 0`;
+    update.lastTime ? timeSinceLastFrame += timestamp - update.lastTime : update.lastTime = timestamp;
+    // Update frame if enough time has passed
+    if (timeSinceLastFrame >= frameDuration) {
+      timeSinceLastFrame = 0;
+      currentFrame = (currentFrame + 1) % nFrames;
+      character.style.backgroundPosition = `-${currentFrame * wFrame}px 0`;
     }
-
-    update.lastTime = timestamp;
-
-    //console.log("walking Area width =", wa.offsetWidth);
-    // Calcular posición objetivo
-    let targetX = wstop.offsetLeft - frameWidth/2;
-    
-    // Mover hacia el objetivo
+    targetX = wstop.offsetLeft - pxToFrameCenter; // update target (maybe there was a window resize)
     x += speed * direction;
-
-    // Cambiar dirección si llegamos a wstart o wstop
+    character.style.left = x + 'px'; // set x position
+    character.style.top = wstart.offsetTop - pxToFrameCenter + 'px'; // set y position
+    // Change direction if we reach the target on the right or the original position on the left
     if (direction === 1 && x >= targetX) {
         x = targetX;
         setTimeout(() => {
@@ -57,11 +49,6 @@ function waitUntilDomLoaded() {
           character.style.transform = 'scaleX(+1)';
         }, 1000);
     }
-
-    // Establecer posición
-    character.style.left = x + 'px';
-    character.style.top = wstart.offsetTop - frameWidth/2 + 'px';
-
     requestAnimationFrame(update);
   }
 
@@ -72,7 +59,7 @@ function waitUntilDomLoaded() {
     // Inicializar posición
     character.style.backgroundPosition = '0 0';
     character.style.left = wstart.offsetLeft + 'px';
-    character.style.top = wstart.offsetTop - frameWidth/2 + 'px';
+    character.style.top = wstart.offsetTop - pxToFrameCenter + 'px';
     character.style.opacity = '0';
     
     // Esperar el tiempo aleatorio antes de iniciar la animación
