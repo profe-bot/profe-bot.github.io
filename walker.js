@@ -32,21 +32,21 @@ function waitUntilDomLoaded() {
 
     update.lastTime = timestamp;
 
-    // Calcular posición objetivo usando getBoundingClientRect
-    let targetX = wa.getBoundingClientRect().right - frameWidth;
+    // Calcular posición objetivo usando coordenadas relativas al documento
+    let targetX = wa.getBoundingClientRect().right + window.scrollX - frameWidth;
     
     // Mover hacia el objetivo
     x += speed * direction;
 
-    // Cambiar dirección si llegamos al final del rectángulo de contenido
+    // Cambiar dirección si llegamos a wstart o wstop
     if (direction === 1 && x >= targetX) {
         x = targetX;
         setTimeout(() => {
           direction = -1;
           character.style.transform = 'scaleX(-1)';
         }, 1000);
-    } else if (direction === -1 && x <= wa.getBoundingClientRect().left) {
-        x = wa.getBoundingClientRect().left;
+    } else if (direction === -1 && x <= wa.getBoundingClientRect().left + window.scrollX) {
+        x = wa.getBoundingClientRect().left + window.scrollX;
         setTimeout(() => {
           direction = 1;
           character.style.transform = 'scaleX(+1)';
@@ -55,7 +55,7 @@ function waitUntilDomLoaded() {
 
     // Establecer posición
     character.style.left = x + 'px';
-    character.style.top = wa.getBoundingClientRect().top - frameWidth/2 + 'px';
+    character.style.top = wa.getBoundingClientRect().top + window.scrollY - frameWidth/2 + 'px';
     requestAnimationFrame(update);
   }
 
