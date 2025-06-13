@@ -68,6 +68,60 @@ function waitUntilDomLoaded() {
   character.style.top = wa.getBoundingClientRect().top - frameWidth/2 + 'px';
   character.style.opacity = '0';
   
+  // Añadir evento de clic al área de caminata
+  let charRect;
+  let charCenterX;
+  let charCenterY;
+  let clickX;
+  let clickY;
+  let distanceX;
+  let distanceY;
+  wa.addEventListener('click', function(e) {
+    // Obtener la posición actual del personaje
+    charRect = character.getBoundingClientRect();
+    charCenterX = charRect.left + frameWidth/2;
+    charCenterY = charRect.top + frameWidth/2;
+
+    // Calcular la distancia del clic al centro del personaje
+    clickX = e.clientX;
+    clickY = e.clientY;
+    distanceX = Math.abs(clickX - charCenterX);
+    distanceY = Math.abs(clickY - charCenterY);
+
+    // Verificar si el clic está dentro del cuadrado frameWidth x frameWidth
+    if (distanceX <= frameWidth/2 && distanceY <= frameWidth/2) {
+      // Crear elemento para el mensaje
+      const message = document.createElement('div');
+      message.textContent = '¡Hola!';
+      message.style.position = 'absolute';
+      message.style.left = (e.clientX + window.scrollX - 10) + 'px';
+      message.style.top = (e.clientY + window.scrollY - 30) + 'px';
+      message.style.color = 'black';
+      message.style.textShadow = '1px 1px 2px black';
+      message.style.fontWeight = 'bold';
+      message.style.pointerEvents = 'none';
+      message.style.animation = 'fadeOut 6.5s forwards';
+      
+      // Añadir el mensaje al documento
+      document.body.appendChild(message);
+      
+      // Eliminar el mensaje después de la animación
+      setTimeout(() => {
+        message.remove();
+      }, 6500);
+    }
+  });
+
+  // Añadir estilos para la animación
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+  `;
+  document.head.appendChild(style);
+  
   // Esperar el tiempo aleatorio antes de iniciar la animación
   function moreOpaque() {
     character.style.opacity = '0.7';
