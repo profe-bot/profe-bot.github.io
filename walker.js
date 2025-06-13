@@ -1,9 +1,11 @@
+var wa; // walkingArea
+
 function waitUntilDomLoaded() {
   // Obtener referencias a elementos
   const character = document.getElementById('character');
   const wstart = document.getElementById('wstart');
   const wstop = document.getElementById('wstop');
-  var wa = document.getElementById("walkingArea");
+  wa = document.getElementById("walkingArea");
 
   // Verificar que los elementos existan
   if (!character || !wstart || !wstop) {
