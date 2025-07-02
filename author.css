@@ -73,8 +73,8 @@ code {
 }
 .cta-btn {
   display: inline-block;
-  background: linear-gradient(90deg, #7c3aed, #b26fdd);
-  color: #fff;
+  background: linear-gradient(90deg, #ccc, #ced);
+  color: #666;
   font-family: 'Quicksand', Arial, sans-serif;
   font-size: 1.14em;
   font-weight: bold;
@@ -88,11 +88,9 @@ code {
   transition: background 0.2s;
 }
 .cta-btn:hover {
-  background: linear-gradient(90deg, #b26fdd, #7c3aed);
+  background: linear-gradient(90deg, #ced, #ccc);
 }
 .cta-btn[disabled] {
-   background: linear-gradient(90deg, #ccc, #ced);
-   color: #666;
    cursor: not-allowed;
 }
 @media (max-width: 600px) {
